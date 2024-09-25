@@ -5,7 +5,7 @@ import '../model/item.dart';
 class HomePage extends StatefulWidget {
   final Isar isar;
 
-  HomePage({required this.isar});
+  const HomePage({required this.isar});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final int _limit = 10;
   int _offset = 0;
-  List<Item> _items = [];
+  final List<Item> _items = [];
   bool _loading = false;
   bool _hasMore = true;
   late ScrollController _scrollController;
@@ -116,16 +116,16 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add New Item'),
+          title: const Text('Add New Item'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Name'),
                 onChanged: (value) => name = value,
               ),
               TextField(
-                decoration: InputDecoration(labelText: 'Number'),
+                decoration: const InputDecoration(labelText: 'Number'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) => numberStr = value,
               ),
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                 _addItem(name, number);  // Call to add the item
                 Navigator.pop(context);
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -159,17 +159,17 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Edit Item'),
+          title: const Text('Edit Item'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(labelText: 'Name'),
                 initialValue: item.name,
                 onChanged: (value) => newName = value,
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Number'),
+                decoration: const InputDecoration(labelText: 'Number'),
                 keyboardType: TextInputType.number,
                 initialValue: item.number.toString(),
                 onChanged: (value) => newNumberStr = value,
@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
                 _updateItem(item, newName, newNumber);  // Call to update the item
                 Navigator.pop(context);
               },
-              child: Text('Update'),
+              child: const Text('Update'),
             ),
           ],
         );
@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Isar Pagination with CRUD'),
+        title: const Text('Isar Pagination with CRUD'),
         actions: [
           IconButton(
             icon: Icon(Icons.add),
@@ -208,15 +208,15 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: _items.isEmpty && !_loading
-          ? Center(child: Text('No items to display'))
+          ? const Center(child: Text('No items to display'))
           : ListView.builder(
         controller: _scrollController,
         itemCount: _items.length + (_hasMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _items.length) {
             return _hasMore
-                ? Center(child: CircularProgressIndicator())
-                : Center(child: Text('No more items to load'));
+                ? const Center(child: CircularProgressIndicator())
+                : const Center(child: Text('No more items to load'));
           }
 
           final item = _items[index];
