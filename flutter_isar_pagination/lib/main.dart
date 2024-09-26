@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_isar_pagination/model/contact.dart';
 import 'package:flutter_isar_pagination/model/item.dart';
 import 'package:flutter_isar_pagination/view/contact_list.dart';
 import 'package:isar/isar.dart';
@@ -12,7 +13,13 @@ void main() async {
   await Permission.contacts.request();
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [ItemSchema],
+    [
+      ContactSchema,
+      PhoneSchema,
+      EmailSchema,
+      StructuredNameSchema,
+      OrganizationSchema
+    ],
     directory: dir.path,
   );
 
@@ -29,7 +36,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner:false,
      // home: HomePage(isar: isar),
-      home: ContactList(),
+      home: ContactList(isar:isar),
     );
   }
 }
