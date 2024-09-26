@@ -66,10 +66,10 @@ class _ContactListState extends State<ContactList> {
 
         // Create the Isar Contact object
         final isarContact = isar_model.Contact()
-          ..structuredName.value = structuredName
+          ..structuredName = structuredName
           ..phones.addAll(phoneLinks)
           ..emails.addAll(emailLinks)
-          ..organization.value = null; // Set organization if available; // Set organization if available
+          ..organization = null; // Set organization if available; // Set organization if available
 
         return isarContact;
       }).toList();
@@ -102,51 +102,58 @@ class _ContactListState extends State<ContactList> {
 
       _text =
       'Contacts: ${_contacts.length}\nTook: ${sw.elapsedMilliseconds}ms';
-      final isarContacts = _contacts.map((c) {
-        // Create structured name
+      // Create a list to hold the converted Isar contacts
+      final isarContacts = <isar_model.Contact>[];
+
+      // Convert phone contacts to Isar contacts
+      final contacts = _contacts.map((c) {
+        // Map `fast_contacts` contact details to Isar `Contact`
         final structuredName = isar_model.StructuredName()
           ..displayName = c.displayName ?? ''
-          ..givenName = c.structuredName!.givenName  ?? ''
+          ..namePrefix = ''
+          ..givenName = c.structuredName!.givenName ?? ''
           ..middleName = c.structuredName!.middleName ?? ''
           ..familyName = c.structuredName!.familyName ?? ''
-          ..namePrefix = c.structuredName!.namePrefix ?? ''
           ..nameSuffix = c.structuredName!.nameSuffix ?? '';
 
-        // Create phones
-        final phoneLinks = IsarLinks<isar_model.Phone>();
-        for (final phone in c.phones) {
-          phoneLinks.add(isar_model.Phone()
-            ..number = phone.number ?? ''
-            ..label = phone.label ?? '');
-        }
+        final organization = isar_model.Organization()
+          ..company = ''
+          ..department = ''
+          ..jobDescription = '';
 
-        // Create emails
-        final emailLinks = IsarLinks<isar_model.Email>();
-        for (final email in c.emails) {
-          emailLinks.add(isar_model.Email()
-            ..address = email.address ?? ''
-            ..label = email.label ?? '');
-        }
-        log("contact log data=>");
-        log("structuredName=>${c.displayName}");
-        log("${structuredName.displayName}");
-        log("$phoneLinks");
-        log("$emailLinks");
+        final phones = c.phones.map((p) {
+          return isar_model.Phone()
+            ..number = p.number ?? ''
+            ..label = p.label ?? 'Unknown';
+        }).toList();
 
-        // Create the Isar Contact object
-        final isarContact = isar_model.Contact()
-          ..structuredName.value = structuredName
-          ..phones.addAll(phoneLinks)
-          ..emails.addAll(emailLinks)
-          ..organization.value = null; // Set organization if available; // Set organization if available
+        final emails = c.emails.map((e) {
+          return isar_model.Email()
+            ..address = e.address ?? ''
+            ..label = e.label ?? 'Unknown';
+        }).toList();
 
-        return isarContact;
+        return isar_model.Contact()
+          ..structuredName = structuredName
+          ..organization = organization
+          ..phones = phones
+          ..emails = emails;
       }).toList();
 
-      // Store contacts in the Isar database
+      // Store contacts in Isar database
       await widget.isar.writeTxn(() async {
-        await widget.isar.contacts.putAll(isarContacts);
+        await widget.isar.contacts.putAll(contacts);
       });
+
+      // Store contacts in the Isar database
+
+      _isLoading = false;
+
+      // Update UI with the stored contacts
+      setState(() {
+        // contacts = isarContacts;
+      });
+
 
 
     } on PlatformException catch (e) {

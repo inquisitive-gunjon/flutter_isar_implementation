@@ -6,29 +6,28 @@ part 'contact.g.dart';
 class Contact {
   Id id = Isar.autoIncrement;
 
-  final IsarLinks<Phone> phones = IsarLinks<Phone>();
-  final IsarLinks<Email> emails = IsarLinks<Email>();
-  final IsarLink<StructuredName> structuredName = IsarLink<StructuredName>();
-  final IsarLink<Organization> organization = IsarLink<Organization>();
+  late List<Phone> phones;
+  late List<Email> emails;
+  late StructuredName structuredName;
+  late Organization? organization;
 }
 
-@collection
+@embedded
 class Phone {
-  Id id = Isar.autoIncrement;  // Required for each collection
+  // Id id = Isar.autoIncrement;  // Required for each collection
   late String number;
   late String label;
 }
 
-@collection
+@embedded
 class Email {
-  Id id = Isar.autoIncrement;  // Required for each collection
+  // Id id = Isar.autoIncrement;  // Required for each collection
   late String address;
   late String label;
 }
 
-@collection
+@embedded
 class StructuredName {
-  Id id = Isar.autoIncrement;  // Required for each collection
   late String displayName;
   late String namePrefix;
   late String givenName;
@@ -37,9 +36,8 @@ class StructuredName {
   late String nameSuffix;
 }
 
-@collection
+@embedded
 class Organization {
-  Id id = Isar.autoIncrement;  // Required for each collection
   late String company;
   late String department;
   late String jobDescription;
